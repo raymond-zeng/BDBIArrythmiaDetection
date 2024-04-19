@@ -1,0 +1,60 @@
+.pageHeader {
+    padding-top: 3%;
+    font-family: 'Helvetica';
+    font-size: 53px; 
+    color: black; 
+}
+
+body {
+    background-color: #fcf0f4;
+    color: black; 
+  }
+  
+.projectDescription {
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    margin-left: 8%;
+    margin-right: 8%;
+    margin-bottom: 3%;
+}
+
+.fileUploadHeader {
+    padding-top: 5%;
+    padding-bottom: 1%;
+    font-family: 'Helvetica'; 
+    font-size: 34px; 
+    color: white;
+    
+}
+
+.uploadButton {
+    border-radius: 10px;
+    background-color: white;
+    /* font-family: 'Helvetica'; */
+    /* margin-left: 1%; */
+    margin-top: 2%;
+    margin-bottom: 2%;
+    font-size: 18px;
+    display: inline-block;
+}
+.fileButton {
+    /* display: inline-block; */
+    margin-left: 9%;
+}
+
+.fileUpload {
+    background-color: #b33636;
+    color: white;
+    border-radius: 10px;
+    margin-left: 20%;
+    margin-right: 20%;
+    padding-bottom: 2%;
+    margin-bottom: 2%;
+    
+}
+
+.ecgImage {
+    object-fit: cover;
+    width: 100%; 
+    height: 200px;
+}

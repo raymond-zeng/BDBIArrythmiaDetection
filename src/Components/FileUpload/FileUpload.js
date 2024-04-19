@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import './FileUpload.css';
+import ecgImage from '../../assets/ecgImage.png';
+
 // var duration = 0;
 
 class FileUpload extends Component {
@@ -38,7 +41,7 @@ class FileUpload extends Component {
     fileData = () => {
         if (this.state.selectedFile) {
             return (
-                <div>
+                <div className = "fileDetails" >
                     <h2>File Details:</h2>
                     <p>File Name: {this.state.selectedFile.name}</p>
                     <p>File Type: {this.state.selectedFile.type}</p>
@@ -46,25 +49,50 @@ class FileUpload extends Component {
                 </div>
             );
         } else {
-            return(
-                <div>
-                    <br></br>
-                        Choose file.
-                </div>
-            );
+            return 
+            // return(
+            //     <div className="chooseFile">
+            //         <br></br>
+            //             Choose file
+            //     </div>
+            // );
         }
     };
     render() {
         return(
-            <div>
-                <h1>
-                    File Upload
-                </h1>
+            <div >
                 <div>
-                    <input type = "file" onChange = {this.onFileChange}></input>
-                    <button onClick = {this.onFileUpload}>Upload!</button>
+                    <h1 className="pageHeader">
+                        Arrhythmia Detection Project
+                    </h1>
+                    <p className="projectDescription">
+                    The objective of this project is to develop a machine learning system for the detection of arrhythmias using
+                    sound data captured from the heart. Arrhythmia is an abnormal heart rhythm that can have serious health
+                    implications. Traditional methods for diagnosing arrhythmia primarily rely on electrocardiogram (ECG) signals,
+                    and technologicals advancements have shown that signals captured from these ECGs can also provide valuable
+                    information for accurate detection. The challenge is to design an algorithm that can analyze an ECG, extract
+                    relevant features, and classify them into normal or arrhythmic categories. The development of such a system
+                    has the potential to complement existing diagnostic methods and enhance the accuracy of arrhythmia detection,
+                    leading to improved and expedited patient care and management of cardiac conditions. 
+                    </p>
                 </div>
+                <div  className="fileUpload ">
+                    <h2 className="fileUploadHeader">
+                        Upload ECG
+                    </h2>
+                    <div className="fileButton" >
+                    <input type = "file" onChange = {this.onFileChange}></input>
+                    </div>
+                    <div>
+                        <button className="uploadButton"
+                        onClick = {this.onFileUpload}>Upload!</button>
+                    </div>
+
                 {this.fileData()}
+                </div>
+                <div>
+                    <img className='ecgImage' src={ecgImage} alt="ecgImage" />
+                </div>
             </div>
         )
     }
