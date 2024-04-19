@@ -80,14 +80,14 @@ class FileUpload extends Component {
                     <h2 className="fileUploadHeader">
                         Upload ECG
                     </h2>
-                {/* <div> */}
+                    <div className="fileButton" >
                     <input type = "file" onChange = {this.onFileChange}></input>
+                    </div>
                     <div>
                         <button className="uploadButton"
                         onClick = {this.onFileUpload}>Upload!</button>
                     </div>
 
-                {/* </div> */}
                 {this.fileData()}
                 </div>
                 <div>
