@@ -1,6 +1,7 @@
 import React from 'react';
 
 function Login() {
+    return (
     <div className = "form">
         <div className = "username">
             <label>Username</label>
@@ -12,6 +13,7 @@ function Login() {
             <button type="submit">Register</button>
         </div>
     </div>
+    )
 }
 
 export default Login;
