@@ -7,25 +7,28 @@ import Home from '../Home';
 import Login from '../Login/Login';
 import Register from '../Login/Register';
 import FileUpload from '../FileUpload/FileUpload';
+import { AuthProvider } from '../../AuthProvider';
+import ProtectedRoute from '../ProtectedRoute';
 
 export default function App() {
   return(
-    <BrowserRouter>
-      <nav>
-        <Link to = "/">Home</Link>
-        <Link to = "/upload">Upload</Link>
-        <Link to = "/login">Login</Link>
-        <Link to = "/register">Register</Link>
-      </nav>
-      <Routes>
-        {/* <Route path = "/" element = {<Layout/>} > */}
-          <Route index element = {<Home/>} />
-          <Route path = "upload" element = {<FileUpload/>} />
-          <Route path = "login" element = {<Login/>} />
-          <Route path = "register" element = {<Register/>} />
-        {/* </Route> */}
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Layout />
+        <Routes>
+          {/* <Route path = "/" element = {<Layout/>} > */}
+            <Route index element = {<Home/>} />
+            <Route path="upload" element={
+            <ProtectedRoute>
+              <FileUpload />
+            </ProtectedRoute>
+          } />
+            <Route path = "login" element = {<Login/>} />
+            <Route path = "register" element = {<Register/>} />
+          {/* </Route> */}
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
   // return(
   //   <div className="App">

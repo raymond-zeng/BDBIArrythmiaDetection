@@ -1,22 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Login.css';
+import { login } from '../../authService';
 
 function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleLogin = async (event) => {
+        event.preventDefault();
+        try {
+            await login(email, password);
+            alert("Login successful!");
+        } catch (error) {
+            console.error("Error during login:", error.message);
+        }
+    };
+
     return (
-    <div className="container">
-        <div className = "form">
-            <div className = "username">
-                <label>Username</label>
-                <input type = "text"/>
-                <label>Password</label>
-                <input type ="text"/>
-            </div>
-            <div>
-                <button type="submit">Login</button>
+        <div className="container">
+            <div className="form">
+                <form onSubmit={handleLogin}>
+                    <div className="username">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <button type="submit">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
-    )
+    );
 }
 
 export default Login;
