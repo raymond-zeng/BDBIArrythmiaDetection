@@ -1,22 +1,23 @@
 import React from 'react';
 import './Login.css';
 
-function Registration() {
+function Login() {
     return (
-    <div className="container">
-        <div className = "form">
-            <div className = "username">
-                <label>Username</label>
-                <input type = "text"/>
-                <label>Password</label>
-                <input type ="text"/>
+        <div className="container">
+            <div className="form">
+                <div className="username">
+                    <label className="label">Username</label>
+                    <input type="text" />
+                </div>
+                <div className="password">
+                    <label className="label">Password</label>
+                    <input type="password" />
+                </div>
+                <button className="button" type="submit">Register</button>
             </div>
-            <div>
-                <button type="submit">Register</button>
-            </div>
-        </div>
-    </div>
-    )
+        </div>)
+
+        ;
 }
 
-export default Registration;
+export default Login;
