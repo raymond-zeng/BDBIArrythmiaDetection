@@ -21,13 +21,13 @@ function Login() {
             <div className="form">
                 <form onSubmit={handleLogin}>
                     <div className="username">
-                        <label>Email</label>
+                        <label className="label">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                        <label>Password</label>
+                        <label className="label">Password</label>
                         <input
                             type="password"
                             value={password}
@@ -35,7 +35,7 @@ function Login() {
                         />
                     </div>
                     <div>
-                        <button type="submit">Login</button>
+                        <button className="button" type="submit">Login</button>
                     </div>
                 </form>
             </div>

@@ -3,7 +3,7 @@ import axios from 'axios';
 import './FileUpload.css';
 import ecgImage from '../../assets/ecgImage.png';
 import { db, auth } from '../../firebase';  // Import Firestore and Auth instances from your Firebase config
-import { doc, setDoc } from "firebase/firestore";  // Import Firestore functions
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";  // Import Firestore functions
 
 // var duration = 0;
 
@@ -11,7 +11,8 @@ class FileUpload extends Component {
     state = {
         selectedFile: null,
         modelType: "EKG",
-        result: null
+        result: null,
+        userUploads: []
     };
     onFileChange = event => {
         this.setState({ selectedFile: event.target.files[0] });
@@ -27,6 +28,13 @@ class FileUpload extends Component {
         // };
         //reader.readAsDataURL(event.target.files[0]);
     };
+
+    componentDidMount() {
+        const user = auth.currentUser;
+        if (user) {
+            this.fetchUserUploads(user.uid);
+        }
+    }
 
     onFileUpload = async () => {
         const formData = new FormData();
@@ -52,6 +60,7 @@ class FileUpload extends Component {
                         result: result
                     });
                     console.log("Data stored");
+                    this.fetchUserUploads(user.uid);
                 }
             } catch (error) {
                 console.error("Error writing document: ", error);
@@ -61,6 +70,14 @@ class FileUpload extends Component {
             console.log(error.response.data);
         });
     };
+
+    fetchUserUploads = async (userId) => {
+        const uploadsRef = collection(db, "users", userId, "uploads");
+        const querySnapshot = await getDocs(uploadsRef);
+        const uploads = querySnapshot.docs.map(doc => doc.data());
+        this.setState({ userUploads: uploads });
+    };
+
     fileData = () => {
         if (this.state.selectedFile) {
             return (
@@ -112,7 +129,25 @@ class FileUpload extends Component {
                     </div>
 
                 {this.fileData()}
+
+                <div className="userUploads">
+                        <h2>Your Upload History:</h2>
+                        {this.state.userUploads.length > 0 ? (
+                            <ul>
+                                {this.state.userUploads.map((upload, index) => (
+                                    <li key={index}>
+                                        <p><strong>Model Type:</strong> {upload.modelType}</p>
+                                        <p><strong>Date Uploaded:</strong> {new Date(upload.dateUploaded).toLocaleString()}</p>
+                                        <p><strong>Result:</strong> {upload.result}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No uploads yet.</p>
+                        )}
+                    </div>
                 </div>
+
                 <div>
                     <img className='ecgImage' src={ecgImage} alt="ecgImage" />
                 </div>

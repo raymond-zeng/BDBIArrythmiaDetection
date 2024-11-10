@@ -16,16 +16,10 @@ export default function App() {
       <BrowserRouter>
         <Layout />
         <Routes>
-          {/* <Route path = "/" element = {<Layout/>} > */}
-            <Route index element = {<Home/>} />
-            <Route path="upload" element={
-            <ProtectedRoute>
-              <FileUpload />
-            </ProtectedRoute>
-          } />
-            <Route path = "login" element = {<Login/>} />
-            <Route path = "register" element = {<Register/>} />
-          {/* </Route> */}
+            <Route path="/" element={<Home />} />
+            <Route path="login" element={<ProtectedRoute element={<Login />} isProtected={true} />} />
+            <Route path="register" element={<ProtectedRoute element={<Register />} isProtected={true} />} />
+            <Route path="upload" element={<ProtectedRoute element={<FileUpload />} isProtected={false} />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

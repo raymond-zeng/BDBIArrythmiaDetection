@@ -23,13 +23,13 @@ function Registration() {
             <div className="form">
                 <form onSubmit={handleRegister}>
                     <div className="username">
-                        <label>Email</label>
+                        <label className="label">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                        <label>Password</label>
+                        <label className="label">Password</label>
                         <input
                             type="password"
                             value={password}
@@ -37,7 +37,7 @@ function Registration() {
                         />
                     </div>
                     <div>
-                        <button type="submit">Register</button>
+                        <button className="button" type="submit">Register</button>
                     </div>
                 </form>
             </div>
