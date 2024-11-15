@@ -1,0 +1,113 @@
+Index: src/Components/FileUpload/FileUpload.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { Component } from 'react';\nimport axios from 'axios';\nimport './FileUpload.css';\nimport ecgImage from '../../assets/ecgImage.png';\n\n// var duration = 0;\n\nclass FileUpload extends Component {\n    state = {\n        selectedFile: null\n    };\n    onFileChange = event => {\n        this.setState({ selectedFile: event.target.files[0] });\n        //get duration of file\n        // var reader = new FileReader();\n        // reader.onload = function() {\n        //     var aud = new Audio(reader.result);\n        //     aud.onloadedmetadata = function() {\n        //         console.log(aud.duration);\n        //         document.getElementById('duration').innerHTML = aud.duration;\n        //         duration = aud.duration;\n        //     };\n        // };\n        //reader.readAsDataURL(event.target.files[0]);\n    };\n\n    onFileUpload = async () => {\n        const formData = new FormData();\n        formData.append(\n            \"file\",\n            this.state.selectedFile,\n            this.state.selectedFile.name\n        );\n        await axios.post(\"http://localhost:5000/upload\", formData).then (function (response) {\n            console.log(response);\n            document.getElementById('res').innerHTML = response.data;\n        }).catch(function (error) {\n            console.log(error.response.data);\n        });\n    };\n    fileData = () => {\n        if (this.state.selectedFile) {\n            return (\n                <div className = \"fileDetails\" >\n                    <h2>File Details:</h2>\n                    <p>File Name: {this.state.selectedFile.name}</p>\n                    <p>File Type: {this.state.selectedFile.type}</p>\n                    <p>Result: </p> <span id = 'res'>Loading...</span>\n                </div>\n            );\n        } else {\n            return \n            // return(\n            //     <div className=\"chooseFile\">\n            //         <br></br>\n            //             Choose file\n            //     </div>\n            // );\n        }\n    };\n    render() {\n        return(\n            <div >\n                <div>\n                    <h1 className=\"pageHeader\">\n                        Arrhythmia Detection Project\n                    </h1>\n                    <p className=\"projectDescription\">\n                    The objective of this project is to develop a machine learning system for the detection of arrhythmias using\n                    sound data captured from the heart. Arrhythmia is an abnormal heart rhythm that can have serious health\n                    implications. Traditional methods for diagnosing arrhythmia primarily rely on electrocardiogram (ECG) signals,\n                    and technologicals advancements have shown that signals captured from these ECGs can also provide valuable\n                    information for accurate detection. The challenge is to design an algorithm that can analyze an ECG, extract\n                    relevant features, and classify them into normal or arrhythmic categories. The development of such a system\n                    has the potential to complement existing diagnostic methods and enhance the accuracy of arrhythmia detection,\n                    leading to improved and expedited patient care and management of cardiac conditions. \n                    </p>\n                </div>\n                <div  className=\"fileUpload \">\n                    <h2 className=\"fileUploadHeader\">\n                        Upload ECG\n                    </h2>\n                    <div className=\"fileButton\" >\n                    <input type = \"file\" onChange = {this.onFileChange}></input>\n                    </div>\n                    <div>\n                        <button className=\"uploadButton\"\n                        onClick = {this.onFileUpload}>Upload!</button>\n                    </div>\n\n                {this.fileData()}\n                </div>\n                <div>\n                    <img className='ecgImage' src={ecgImage} alt=\"ecgImage\" />\n                </div>\n            </div>\n        )\n    }\n}\n\nexport default FileUpload;
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Components/FileUpload/FileUpload.js b/src/Components/FileUpload/FileUpload.js
+--- a/src/Components/FileUpload/FileUpload.js	(revision 91785f3c2a66e426e9dc8e011739046dd5a512a8)
++++ b/src/Components/FileUpload/FileUpload.js	(date 1731099341806)
+@@ -7,7 +7,8 @@
+ 
+ class FileUpload extends Component {
+     state = {
+-        selectedFile: null
++        selectedFile: null,
++        modelChoice: "model",
+     };
+     onFileChange = event => {
+         this.setState({ selectedFile: event.target.files[0] });
+@@ -23,6 +24,10 @@
+         // };
+         //reader.readAsDataURL(event.target.files[0]);
+     };
++    onModelChange = event => {
++        this.setState({ modelChoice: event.target.value });
++    };
++
+ 
+     onFileUpload = async () => {
+         const formData = new FormData();
+@@ -31,6 +36,7 @@
+             this.state.selectedFile,
+             this.state.selectedFile.name
+         );
++        formData.append("model_choice", this.state.modelChoice);
+         await axios.post("http://localhost:5000/upload", formData).then (function (response) {
+             console.log(response);
+             document.getElementById('res').innerHTML = response.data;
+@@ -76,22 +82,29 @@
+                     leading to improved and expedited patient care and management of cardiac conditions. 
+                     </p>
+                 </div>
+-                <div  className="fileUpload ">
++                <div className="fileUpload ">
+                     <h2 className="fileUploadHeader">
+                         Upload ECG
+                     </h2>
+-                    <div className="fileButton" >
+-                    <input type = "file" onChange = {this.onFileChange}></input>
++                    <div>
++                        <label>Select Model for: </label>
++                        <select value={this.state.modelChoice} onChange={this.onModelChange}>
++                            <option value="model">ECG File</option>
++                            <option value="model2">Heartbeat Audio</option>
++                        </select>
++                    </div>
++                    <div className="fileButton">
++                        <input type="file" onChange={this.onFileChange}></input>
+                     </div>
+                     <div>
+                         <button className="uploadButton"
+-                        onClick = {this.onFileUpload}>Upload!</button>
++                                onClick={this.onFileUpload}>Upload!
++                        </button>
+                     </div>
+-
+-                {this.fileData()}
++                    {this.fileData()}
+                 </div>
+                 <div>
+-                    <img className='ecgImage' src={ecgImage} alt="ecgImage" />
++                    <img className='ecgImage' src={ecgImage} alt="ecgImage"/>
+                 </div>
+             </div>
+         )
+Index: PythonBackend/Model.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Imports\nimport os\nimport glob\nimport fnmatch\nimport pandas as pd\nimport numpy as np\nimport librosa #To deal with Audio files\nimport math\nimport tensorflow as tf\nimport scipy.io as sio\n\nfrom keras.models import Sequential\nfrom keras.layers import Dense\nfrom keras.models import load_model\npath = 'C:/Users/ruimi/Documents/BDBI/BDBIArrythmiaDetection/PythonBackend'\n# Load the model\nloaded_model = load_model(path + '/my_model2.h5')\nencoding = {0: 'normal', 1: 'abnormal'}\n\ndef preprocessing(file):\n    num_rows = 2160\n    n = 20\n    m = 108\n    t = 1\n    c = 1\n    ecg_data = np.loadtxt(file, delimiter=',', dtype=np.float32)\n    ecg_data = ecg_data.reshape(1, t, n, m, c)\n    return ecg_data\n\ndef get_prediction(file):\n    x_test = preprocessing(file)\n    y_pred = loaded_model.predict(x_test, batch_size=32)\n    return encoding[round(y_pred[0][0])]\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/PythonBackend/Model.py b/PythonBackend/Model.py
+--- a/PythonBackend/Model.py	(revision 91785f3c2a66e426e9dc8e011739046dd5a512a8)
++++ b/PythonBackend/Model.py	(date 1731099717755)
+@@ -14,7 +14,14 @@
+ from keras.models import load_model
+ path = 'C:/Users/ruimi/Documents/BDBI/BDBIArrythmiaDetection/PythonBackend'
+ # Load the model
+-loaded_model = load_model(path + '/my_model2.h5')
++
++model_paths = {
++    "model": path + '/my_model.h5',
++    "model2": path + '/my_model2.h5'
++}
++models = {name: load_model(model_path) for name, model_path in model_paths.items()}
++
++#loaded_model = load_model(path + '/my_model.h5')
+ encoding = {0: 'normal', 1: 'abnormal'}
+ 
+ def preprocessing(file):
+@@ -27,7 +34,8 @@
+     ecg_data = ecg_data.reshape(1, t, n, m, c)
+     return ecg_data
+ 
+-def get_prediction(file):
++def get_prediction(file, model_choice="model"):
++    model = models[model_choice]
+     x_test = preprocessing(file)
+-    y_pred = loaded_model.predict(x_test, batch_size=32)
++    y_pred = model.predict(x_test, batch_size=32)
+     return encoding[round(y_pred[0][0])]
