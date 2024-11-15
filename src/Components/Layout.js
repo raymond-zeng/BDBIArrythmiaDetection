@@ -1,26 +1,30 @@
+import React from "react";
 import { Outlet, Link } from "react-router-dom";
+import { useAuth } from "../AuthProvider";
 
 const Layout = () => {
-    return (
-        <>
-            <nav>
-                <ul>
-                    <li>
-                        <Link to = "/">Home</Link>
-                    </li>
-                    <li>
-                        <Link to = "/upload">Upload</Link>
-                    </li>
-                    <li>
-                        <Link to = "/login">Login</Link>
-                    </li>
-                    <li>
-                        <Link to = "/register">Register</Link>
-                    </li>
-                </ul>
-            </nav>
-        </>
-    )
+  const { user, logout } = useAuth();
+
+  return (
+    <>
+      <nav>
+        <Link to="/">Home</Link>
+        {user ? (
+          <>
+            <Link to="/upload">Upload</Link>
+            <Link onClick={logout}>Logout</Link>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Login</Link>
+
+            <Link to="/register">Register</Link>
+          </>
+        )}
+      </nav>
+      <Outlet />
+    </>
+  );
 };
 
-export default Layout
+export default Layout;
