@@ -17,9 +17,9 @@ export default function App() {
         <Layout />
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="upload" element={<FileUpload />} />
             <Route path="login" element={<ProtectedRoute element={<Login />} isProtected={true} />} />
             <Route path="register" element={<ProtectedRoute element={<Register />} isProtected={true} />} />
+            <Route path="upload" element={<ProtectedRoute element={<FileUpload />} isProtected={false} />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -9,9 +9,9 @@ const Layout = () => {
     <>
       <nav>
         <Link to="/">Home</Link>
-        <Link to="/upload">Upload</Link>
         {user ? (
           <>
+            <Link to="/upload">Upload</Link>
             <Link onClick={logout}>Logout</Link>
           </>
         ) : (
