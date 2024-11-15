@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './FileUpload.css';
 import ecgImage from '../../assets/ecgImage.png';
+import { db, auth } from '../../firebase';  // Import Firestore and Auth instances from your Firebase config
+import { doc, setDoc, collection, getDocs } from "firebase/firestore";  // Import Firestore functions
 
 // var duration = 0;
 
 class FileUpload extends Component {
     state = {
-        selectedFile: null
+        selectedFile: null,
+        modelType: "EKG",
+        result: null,
+        userUploads: []
     };
     onFileChange = event => {
         this.setState({ selectedFile: event.target.files[0] });
@@ -24,6 +29,13 @@ class FileUpload extends Component {
         //reader.readAsDataURL(event.target.files[0]);
     };
 
+    componentDidMount() {
+        const user = auth.currentUser;
+        if (user) {
+            this.fetchUserUploads(user.uid);
+        }
+    }
+
     onFileUpload = async () => {
         const formData = new FormData();
         formData.append(
@@ -31,13 +43,41 @@ class FileUpload extends Component {
             this.state.selectedFile,
             this.state.selectedFile.name
         );
-        await axios.post("http://localhost:5000/upload", formData).then (function (response) {
-            console.log(response);
-            document.getElementById('res').innerHTML = response.data;
+        
+        await axios.post("http://localhost:5000/upload", formData).then (async function (response) {
+            const result = response.data;
+            this.setState(result);
+            console.log(result);
+            document.getElementById('res').innerHTML = result;
+
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    const docRef = doc(db, "users", user.uid, "uploads", this.state.selectedFile.name);
+                    await setDoc(docRef, {
+                        modelType: this.state.modelType,
+                        dateUploaded: new Date().toISOString(),
+                        result: result
+                    });
+                    console.log("Data stored");
+                    this.fetchUserUploads(user.uid);
+                }
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
+
         }).catch(function (error) {
             console.log(error.response.data);
         });
     };
+
+    fetchUserUploads = async (userId) => {
+        const uploadsRef = collection(db, "users", userId, "uploads");
+        const querySnapshot = await getDocs(uploadsRef);
+        const uploads = querySnapshot.docs.map(doc => doc.data());
+        this.setState({ userUploads: uploads });
+    };
+
     fileData = () => {
         if (this.state.selectedFile) {
             return (
@@ -89,7 +129,25 @@ class FileUpload extends Component {
                     </div>
 
                 {this.fileData()}
+
+                <div className="userUploads">
+                        <h2>Your Upload History:</h2>
+                        {this.state.userUploads.length > 0 ? (
+                            <ul>
+                                {this.state.userUploads.map((upload, index) => (
+                                    <li key={index}>
+                                        <p><strong>Model Type:</strong> {upload.modelType}</p>
+                                        <p><strong>Date Uploaded:</strong> {new Date(upload.dateUploaded).toLocaleString()}</p>
+                                        <p><strong>Result:</strong> {upload.result}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No uploads yet.</p>
+                        )}
+                    </div>
                 </div>
+
                 <div>
                     <img className='ecgImage' src={ecgImage} alt="ecgImage" />
                 </div>
