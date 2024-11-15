@@ -2,17 +2,13 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import './FileUpload.css';
 import ecgImage from '../../assets/ecgImage.png';
-import { db, auth } from '../../firebase';  // Import Firestore and Auth instances from your Firebase config
-import { doc, setDoc, collection, getDocs } from "firebase/firestore";  // Import Firestore functions
 
 // var duration = 0;
 
 class FileUpload extends Component {
     state = {
         selectedFile: null,
-        modelType: "EKG",
-        result: null,
-        userUploads: []
+        modelChoice: "model1",
     };
     onFileChange = event => {
         this.setState({ selectedFile: event.target.files[0] });
@@ -29,12 +25,9 @@ class FileUpload extends Component {
         //reader.readAsDataURL(event.target.files[0]);
     };
 
-    componentDidMount() {
-        const user = auth.currentUser;
-        if (user) {
-            this.fetchUserUploads(user.uid);
-        }
-    }
+    onModelChange = event => {
+        this.setState({ modelChoice: event.target.value });
+    };
 
     onFileUpload = async () => {
         const formData = new FormData();
@@ -43,41 +36,14 @@ class FileUpload extends Component {
             this.state.selectedFile,
             this.state.selectedFile.name
         );
-        
-        await axios.post("http://localhost:5000/upload", formData).then (async function (response) {
-            const result = response.data;
-            this.setState(result);
-            console.log(result);
-            document.getElementById('res').innerHTML = result;
-
-            try {
-                const user = auth.currentUser;
-                if (user) {
-                    const docRef = doc(db, "users", user.uid, "uploads", this.state.selectedFile.name);
-                    await setDoc(docRef, {
-                        modelType: this.state.modelType,
-                        dateUploaded: new Date().toISOString(),
-                        result: result
-                    });
-                    console.log("Data stored");
-                    this.fetchUserUploads(user.uid);
-                }
-            } catch (error) {
-                console.error("Error writing document: ", error);
-            }
-
+        formData.append("model_choice", this.state.modelChoice);
+        await axios.post("http://localhost:5000/upload", formData).then (function (response) {
+            console.log(response);
+            document.getElementById('res').innerHTML = response.data;
         }).catch(function (error) {
             console.log(error.response.data);
         });
     };
-
-    fetchUserUploads = async (userId) => {
-        const uploadsRef = collection(db, "users", userId, "uploads");
-        const querySnapshot = await getDocs(uploadsRef);
-        const uploads = querySnapshot.docs.map(doc => doc.data());
-        this.setState({ userUploads: uploads });
-    };
-
     fileData = () => {
         if (this.state.selectedFile) {
             return (
@@ -89,7 +55,7 @@ class FileUpload extends Component {
                 </div>
             );
         } else {
-            return 
+            return
             // return(
             //     <div className="chooseFile">
             //         <br></br>
@@ -113,43 +79,33 @@ class FileUpload extends Component {
                     information for accurate detection. The challenge is to design an algorithm that can analyze an ECG, extract
                     relevant features, and classify them into normal or arrhythmic categories. The development of such a system
                     has the potential to complement existing diagnostic methods and enhance the accuracy of arrhythmia detection,
-                    leading to improved and expedited patient care and management of cardiac conditions. 
+                    leading to improved and expedited patient care and management of cardiac conditions.
                     </p>
                 </div>
-                <div  className="fileUpload ">
+                <div className="fileUpload ">
                     <h2 className="fileUploadHeader">
                         Upload ECG
                     </h2>
-                    <div className="fileButton" >
-                    <input type = "file" onChange = {this.onFileChange}></input>
+                    <div>
+                        <label>Select Model: </label>
+                        <select value={this.state.modelChoice} onChange={this.onModelChange}>
+                            <option value="model1">ECG</option>
+                            <option value="model2">Heartbeat Audio</option>
+                        </select>
+                    </div>
+                    <div className="fileButton">
+                        <input type="file" onChange={this.onFileChange}></input>
                     </div>
                     <div>
                         <button className="uploadButton"
-                        onClick = {this.onFileUpload}>Upload!</button>
+                                onClick={this.onFileUpload}>Upload!
+                        </button>
                     </div>
 
-                {this.fileData()}
-
-                <div className="userUploads">
-                        <h2>Your Upload History:</h2>
-                        {this.state.userUploads.length > 0 ? (
-                            <ul>
-                                {this.state.userUploads.map((upload, index) => (
-                                    <li key={index}>
-                                        <p><strong>Model Type:</strong> {upload.modelType}</p>
-                                        <p><strong>Date Uploaded:</strong> {new Date(upload.dateUploaded).toLocaleString()}</p>
-                                        <p><strong>Result:</strong> {upload.result}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No uploads yet.</p>
-                        )}
-                    </div>
+                    {this.fileData()}
                 </div>
-
                 <div>
-                    <img className='ecgImage' src={ecgImage} alt="ecgImage" />
+                    <img className='ecgImage' src={ecgImage} alt="ecgImage"/>
                 </div>
             </div>
         )
