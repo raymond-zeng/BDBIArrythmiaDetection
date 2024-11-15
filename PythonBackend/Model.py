@@ -15,8 +15,8 @@ from keras.models import load_model
 path = 'C:/Users/ruimi/Documents/BDBI/BDBIArrythmiaDetection/PythonBackend'
 # Load the model
 model_paths = {
-    "model1": path + '/my_model.h5',
-    "model2": path + '/my_model2.h5'
+    "EKG": path + '/my_model.h5',
+    "Audio": path + '/my_model2.h5'
 }
 models = {name: load_model(model_path) for name, model_path in model_paths.items()}
 
@@ -33,7 +33,7 @@ def preprocessing(file):
     ecg_data = ecg_data.reshape(1, t, n, m, c)
     return ecg_data
 
-def get_prediction(file, model_choice="model1"):
+def get_prediction(file, model_choice="EKG"):
     model = models[model_choice]
     x_test = preprocessing(file)
     y_pred = model.predict(x_test, batch_size=32)
