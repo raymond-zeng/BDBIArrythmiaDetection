@@ -14,7 +14,13 @@ from keras.layers import Dense
 from keras.models import load_model
 path = 'C:/Users/ruimi/Documents/BDBI/BDBIArrythmiaDetection/PythonBackend'
 # Load the model
-loaded_model = load_model(path + '/my_model2.h5')
+model_paths = {
+    "model1": path + '/my_model.h5',
+    "model2": path + '/my_model2.h5'
+}
+models = {name: load_model(model_path) for name, model_path in model_paths.items()}
+
+
 encoding = {0: 'normal', 1: 'abnormal'}
 
 def preprocessing(file):
@@ -27,7 +33,8 @@ def preprocessing(file):
     ecg_data = ecg_data.reshape(1, t, n, m, c)
     return ecg_data
 
-def get_prediction(file):
+def get_prediction(file, model_choice="model1"):
+    model = models[model_choice]
     x_test = preprocessing(file)
-    y_pred = loaded_model.predict(x_test, batch_size=32)
+    y_pred = model.predict(x_test, batch_size=32)
     return encoding[round(y_pred[0][0])]

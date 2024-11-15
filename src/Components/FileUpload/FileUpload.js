@@ -7,7 +7,8 @@ import ecgImage from '../../assets/ecgImage.png';
 
 class FileUpload extends Component {
     state = {
-        selectedFile: null
+        selectedFile: null,
+        modelChoice: "model1",
     };
     onFileChange = event => {
         this.setState({ selectedFile: event.target.files[0] });
@@ -24,6 +25,10 @@ class FileUpload extends Component {
         //reader.readAsDataURL(event.target.files[0]);
     };
 
+    onModelChange = event => {
+        this.setState({ modelChoice: event.target.value });
+    };
+
     onFileUpload = async () => {
         const formData = new FormData();
         formData.append(
@@ -31,6 +36,7 @@ class FileUpload extends Component {
             this.state.selectedFile,
             this.state.selectedFile.name
         );
+        formData.append("model_choice", this.state.modelChoice);
         await axios.post("http://localhost:5000/upload", formData).then (function (response) {
             console.log(response);
             document.getElementById('res').innerHTML = response.data;
@@ -76,22 +82,30 @@ class FileUpload extends Component {
                     leading to improved and expedited patient care and management of cardiac conditions. 
                     </p>
                 </div>
-                <div  className="fileUpload ">
+                <div className="fileUpload ">
                     <h2 className="fileUploadHeader">
                         Upload ECG
                     </h2>
-                    <div className="fileButton" >
-                    <input type = "file" onChange = {this.onFileChange}></input>
+                    <div>
+                        <label>Select Model: </label>
+                        <select value={this.state.modelChoice} onChange={this.onModelChange}>
+                            <option value="model1">ECG</option>
+                            <option value="model2">Heartbeat Audio</option>
+                        </select>
+                    </div>
+                    <div className="fileButton">
+                        <input type="file" onChange={this.onFileChange}></input>
                     </div>
                     <div>
                         <button className="uploadButton"
-                        onClick = {this.onFileUpload}>Upload!</button>
+                                onClick={this.onFileUpload}>Upload!
+                        </button>
                     </div>
 
-                {this.fileData()}
+                    {this.fileData()}
                 </div>
                 <div>
-                    <img className='ecgImage' src={ecgImage} alt="ecgImage" />
+                    <img className='ecgImage' src={ecgImage} alt="ecgImage"/>
                 </div>
             </div>
         )
