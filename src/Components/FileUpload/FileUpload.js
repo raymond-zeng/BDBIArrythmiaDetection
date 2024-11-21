@@ -27,6 +27,11 @@ class FileUpload extends Component {
         //     };
         // };
         //reader.readAsDataURL(event.target.files[0]);
+
+    };
+
+    onModelChange = event => {
+        this.setState({ modelType: event.target.value });
     };
 
     componentDidMount() {
@@ -43,6 +48,7 @@ class FileUpload extends Component {
             this.state.selectedFile,
             this.state.selectedFile.name
         );
+        formData.append("model_choice", this.state.modelType);
         
         await axios.post("http://localhost:5000/upload", formData).then (async function (response) {
             const result = response.data;
@@ -116,28 +122,39 @@ class FileUpload extends Component {
                     leading to improved and expedited patient care and management of cardiac conditions. 
                     </p>
                 </div>
-                <div  className="fileUpload ">
+                <div className="fileUpload ">
                     <h2 className="fileUploadHeader">
                         Upload ECG
                     </h2>
-                    <div className="fileButton" >
-                    <input type = "file" onChange = {this.onFileChange}></input>
+                    <div>
+                        <label>Select Model: </label>
+                        <select value={this.state.modelType} onChange={this.onModelChange}>
+                            <option value="EKG">EKG</option>
+                            <option value="Audio">Heartbeat Audio</option>
+                        </select>
                     </div>
+
+                    <div className="fileButton">
+                        <input type="file" onChange={this.onFileChange}></input>
+                    </div>
+
                     <div>
                         <button className="uploadButton"
-                        onClick = {this.onFileUpload}>Upload!</button>
+                                onClick={this.onFileUpload}>Upload!
+                        </button>
                     </div>
 
-                {this.fileData()}
+                    {this.fileData()}
 
-                <div className="userUploads">
+                    <div className="userUploads">
                         <h2>Your Upload History:</h2>
                         {this.state.userUploads.length > 0 ? (
                             <ul>
                                 {this.state.userUploads.map((upload, index) => (
                                     <li key={index}>
                                         <p><strong>Model Type:</strong> {upload.modelType}</p>
-                                        <p><strong>Date Uploaded:</strong> {new Date(upload.dateUploaded).toLocaleString()}</p>
+                                        <p><strong>Date
+                                            Uploaded:</strong> {new Date(upload.dateUploaded).toLocaleString()}</p>
                                         <p><strong>Result:</strong> {upload.result}</p>
                                     </li>
                                 ))}
@@ -149,7 +166,7 @@ class FileUpload extends Component {
                 </div>
 
                 <div>
-                    <img className='ecgImage' src={ecgImage} alt="ecgImage" />
+                    <img className='ecgImage' src={ecgImage} alt="ecgImage"/>
                 </div>
             </div>
         )
